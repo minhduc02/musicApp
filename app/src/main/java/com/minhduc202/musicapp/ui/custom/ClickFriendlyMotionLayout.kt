@@ -18,7 +18,7 @@ class ClickFriendlyMotionLayout: MotionLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-//        Log.e("ANCUTKO", event.action.toString())
+//        Log.e("ABC", event.action.toString())
 //        if (event.action == MotionEvent.ACTION_DOWN) {
 //            startTime = event.eventTime
 //        }

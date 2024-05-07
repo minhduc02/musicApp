@@ -1,11 +1,12 @@
 package com.minhduc202.musicapp.util
 
+import android.content.Context
 import android.media.MediaPlayer
+import android.net.Uri
 import android.util.Log
-import com.minhduc202.musicapp.constant.Constants
 
 object MediaPlayerUtil {
-    private val mediaPlayer by lazy { MediaPlayer() }
+    private var mediaPlayer = MediaPlayer()
     private var curId = -1
     private var mediaBufferPercent = 0
 
@@ -47,7 +48,7 @@ object MediaPlayerUtil {
             curId = id
             prepareForNew()
             mediaPlayer.setDataSource(url)
-            Log.e("ANCUTKO", url)
+            Log.e("ABC", url)
             mediaPlayer.setOnPreparedListener {
                 it.start()
                 onDone.onPrepared()
@@ -61,7 +62,7 @@ object MediaPlayerUtil {
             mediaPlayer.prepareAsync()
         } catch (e: Exception) {
             onDone.onFailed()
-            Log.e("ANCUTKO", e.message.toString())
+            Log.e("ABC", e.message.toString())
         }
     }
 
@@ -81,5 +82,23 @@ object MediaPlayerUtil {
     fun releaseAll() {
         if (mediaPlayer.isPlaying) mediaPlayer.stop()
         mediaPlayer.release()
+    }
+
+    fun playByUrl(context: Context, uri: Uri) {
+        try {
+            prepareForNew()
+            mediaPlayer = MediaPlayer.create(context, uri)
+            mediaPlayer.setOnPreparedListener {
+                it.start()
+            }
+            mediaPlayer.setOnBufferingUpdateListener { _, percent ->
+                mediaBufferPercent = percent
+            }
+            mediaPlayer.setOnCompletionListener {
+            }
+            mediaPlayer.prepareAsync()
+        } catch (e: Exception) {
+            Log.e("ABC", e.message.toString())
+        }
     }
 }

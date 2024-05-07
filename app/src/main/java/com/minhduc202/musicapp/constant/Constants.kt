@@ -26,9 +26,12 @@ object Constants {
 
     const val CHILD_MUSICS = "musics"
     const val CHILD_USERS = "users"
+    const val CHILD_ADMIN = "admin"
     const val CHILD_PROFILE_IMAGE = "image"
     const val CHILD_PASSWORD = "password"
     const val CHILD_NAME = "name"
+    const val CHILD_FAVORITE = "favoriteList"
+    const val CHILD_HISTORY = "historyList"
 
     const val FRAGMENT_HOME = 0
     const val FRAGMENT_FAVORITE = 1

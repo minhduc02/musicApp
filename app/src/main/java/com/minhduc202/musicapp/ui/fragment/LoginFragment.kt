@@ -1,5 +1,7 @@
 package com.minhduc202.musicapp.ui.fragment
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,8 +9,20 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.database
+import com.google.firebase.database.getValue
+import com.minhduc202.musicapp.R
+import com.minhduc202.musicapp.constant.Constants
 import com.minhduc202.musicapp.databinding.FragmentLoginBinding
+import com.minhduc202.musicapp.model.Admin
+import com.minhduc202.musicapp.model.User
+import com.minhduc202.musicapp.ui.activity.AdminHomeActivity
 import com.minhduc202.musicapp.ui.activity.LoginAndSignUpActivity
 
 
@@ -49,9 +63,35 @@ class LoginFragment : Fragment() {
         }
     }
 
+    private fun checkAdmin() {
+        val userEmail = binding.etUserName.text.toString()
+        val userPassword = binding.etPassWord.text.toString()
+
+        val database = Firebase.database
+        val myRef = database.reference.child(Constants.CHILD_ADMIN)
+        myRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val listAdmin = snapshot.getValue<List<Admin>>()
+                listAdmin?.let {
+                    it.forEach {
+                        if (it.adminName == userEmail && it.password == userPassword) {
+                            startActivity(Intent(requireContext(), AdminHomeActivity::class.java))
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+    }
+
     private fun login() {
         val userEmail = binding.etUserName.text.toString()
         val userPassword = binding.etPassWord.text.toString()
+
+        checkAdmin()
 
         val auth = FirebaseAuth.getInstance()
 

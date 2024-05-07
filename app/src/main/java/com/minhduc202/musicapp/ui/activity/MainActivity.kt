@@ -40,6 +40,7 @@ import com.minhduc202.musicapp.model.MusicItem
 import com.minhduc202.musicapp.R
 import com.minhduc202.musicapp.databinding.ActivityMainBinding
 import com.minhduc202.musicapp.service.MyService
+import com.minhduc202.musicapp.ui.fragment.FavoriteFragment
 import com.minhduc202.musicapp.ui.fragment.HomeFragment
 import com.minhduc202.musicapp.ui.fragment.ProfileFragment
 import com.minhduc202.musicapp.util.FormatterUtil
@@ -116,6 +117,9 @@ class MainActivity : BaseActivity() {
 
         auth = Firebase.auth
         val currentUser = auth.currentUser
+        if (currentUser != null) {
+            getFavoriteList(currentUser.uid)
+        }
     }
 
     private fun setupView() {
@@ -225,10 +229,30 @@ class MainActivity : BaseActivity() {
             handleRepeat()
         }
 
+        binding.iconFav.setOnClickListener {
+            auth = Firebase.auth
+            val currentUser = auth.currentUser
+            if (currentUser == null) {
+                Toast.makeText(
+                    this@MainActivity,
+                    "Bạn cần đăng nhập để sử dụng tính năng này",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                addToFavorite()
+            }
+        }
+
         binding.btnHome.setOnClickListener {
             replaceFragment(HomeFragment.newInstance())
             updateBottomNav(Constants.FRAGMENT_HOME)
             curFragment = Constants.FRAGMENT_HOME
+        }
+
+        binding.btnFav.setOnClickListener {
+            replaceFragment(FavoriteFragment.newInstance())
+            updateBottomNav(Constants.FRAGMENT_FAVORITE)
+            curFragment = Constants.FRAGMENT_FAVORITE
         }
 
         binding.btnProfile.setOnClickListener {
@@ -238,6 +262,21 @@ class MainActivity : BaseActivity() {
         }
 
         binding.tvCurrentTime
+    }
+
+    private fun addToFavorite() {
+        val database = Firebase.database.reference
+        val isInList = favoriteList.remove(curSong)
+        if (isInList) {
+            binding.iconFav.setImageResource(R.drawable.ic_fav_white)
+        } else {
+            Toast.makeText(this@MainActivity, "Đã thêm vào danh sách yêu thích", Toast.LENGTH_SHORT)
+                .show()
+            binding.iconFav.setImageResource(R.drawable.ic_favorite_active)
+            favoriteList.add(curSong)
+        }
+        database.child(Constants.CHILD_USERS).child(auth.currentUser?.uid!!)
+            .child(Constants.CHILD_FAVORITE).setValue(favoriteList)
     }
 
     private fun updateBottomNav(curFragment: Int) {
@@ -293,9 +332,10 @@ class MainActivity : BaseActivity() {
         }
         val newPos = if (curPosInPlayList > 0) curPosInPlayList - 1 else curPlayingList.size - 1
         curPosInPlayList = newPos
-        Log.e("ANCUTKO", "Pos $curPosInPlayList")
+        Log.e("ABC", "Pos $curPosInPlayList")
         val newSong = curPlayingList[newPos]
         initMusicData(newSong)
+        updateHistory(newSong)
         startMusicService(newSong)
         MediaPlayerUtil.playNewOrResume(
             newSong.id!!,
@@ -328,9 +368,10 @@ class MainActivity : BaseActivity() {
         }
         val newPos = if (curPosInPlayList < curPlayingList.size - 1) curPosInPlayList + 1 else 0
         curPosInPlayList = newPos
-        Log.e("ANCUTKO", "Pos $curPosInPlayList")
+        Log.e("ABC", "Pos $curPosInPlayList")
         val newSong = curPlayingList[newPos]
         initMusicData(newSong)
+        updateHistory(newSong)
         MediaPlayerUtil.playNewOrResume(
             newSong.id!!,
             newSong.src.toString(),
@@ -468,6 +509,7 @@ class MainActivity : BaseActivity() {
 
     fun startPlaying(musicSelected: MusicItem, isFromFavorite: Boolean = false) {
         turnOnMusicPlayer(musicSelected)
+        updateHistory(musicSelected)
         if (isFromFavorite) {
             isPlayingFavorite = true
             curPlayingList.clear()
@@ -503,6 +545,40 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    private fun getFavoriteList(id: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val database = Firebase.database
+            val myRef =
+                database.reference.child(Constants.CHILD_USERS).child(id)
+                    .child(Constants.CHILD_FAVORITE)
+            myRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    favoriteList.clear()
+                    val tempList = dataSnapshot.getValue<List<MusicItem>>()
+                    tempList?.let {
+                        for (item in it) {
+                            favoriteList.add(item)
+                        }
+                    }
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val isInList = favoriteList.contains(curSong)
+                        if (!isInList) binding.iconFav.setImageResource(R.drawable.ic_fav_white)
+                        else binding.iconFav.setImageResource(R.drawable.ic_favorite_active)
+
+                        if (isPlayingFavorite) {
+                            curPlayingList.clear()
+                            curPlayingList.addAll(favoriteList)
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+            })
+        }
+    }
+
     private fun startMusicService(musicSelected: MusicItem) {
         val intent = Intent(this@MainActivity, MyService::class.java)
         intent.putExtra(Constants.EXTRA_SONG_NAME, musicSelected.name)
@@ -512,6 +588,36 @@ class MainActivity : BaseActivity() {
         startService(intent)
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
+
+    private fun updateHistory(musicSelected: MusicItem) {
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            // do nothing
+        } else {
+            CoroutineScope(Dispatchers.IO).launch {
+                val database = Firebase.database
+                val myRef = database.reference.child(Constants.CHILD_USERS).child(currentUser.uid)
+                    .child(Constants.CHILD_HISTORY)
+                myRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val historyList = ArrayList<MusicItem>()
+                        val tempList = dataSnapshot.getValue<List<MusicItem>>()
+                        tempList?.let {
+                            historyList.addAll(it)
+                        }
+                        historyList.remove(musicSelected)
+                        historyList.add(musicSelected)
+                        database.reference.child(Constants.CHILD_USERS).child(auth.currentUser?.uid!!).child(Constants.CHILD_HISTORY).setValue(historyList)
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+                })
+            }
+        }
+    }
+
     private fun stopBoundService() {
         if (isServiceConnected) {
             unbindService(serviceConnection)

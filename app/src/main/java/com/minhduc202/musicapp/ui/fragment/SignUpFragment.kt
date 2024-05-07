@@ -81,7 +81,7 @@ class SignUpFragment : Fragment() {
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity()) { task ->
                     if (task.isSuccessful) {
-                        Log.d("ANCUTKO", "createUserWithEmail:success")
+                        Log.d("ABC", "createUserWithEmail:success")
                         Toast.makeText(
                             requireContext(),
                             "Đăng ký tài khoản thành công",
@@ -92,7 +92,7 @@ class SignUpFragment : Fragment() {
                         requireActivity().finish()
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.w("ANCUTKO", "createUserWithEmail:failure", task.exception)
+                        Log.w("ABC", "createUserWithEmail:failure", task.exception)
                         Toast.makeText(
                             requireContext(),
                             "Tài khoản đã tồn tại",

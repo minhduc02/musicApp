@@ -2,6 +2,7 @@ package com.minhduc202.musicapp.preference
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 
 class MyPreferences private constructor() {
     companion object {

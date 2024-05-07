@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
     <application
-        android:name="com.minhduc202.musicapp.app.MyApplication"
+        android:name=".app.MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -20,11 +20,18 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name="com.minhduc202.musicapp.ui.activity.LoginAndSignUpActivity"
+            android:name="com.minhduc202.musicapp.ui.activity.HistoryActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="com.minhduc202.musicapp.ui.activity.SplashScreenActivity"
+            android:name=".ui.activity.AdminHomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activity.LoginAndSignUpActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.SplashScreenActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -34,17 +41,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.minhduc202.musicapp.ui.activity.MainActivity"
+            android:name=".ui.activity.MainActivity"
             android:exported="false"
             android:launchMode="singleInstance"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
 
         <service
-            android:name="com.minhduc202.musicapp.service.MyService"
+            android:name=".service.MyService"
             android:foregroundServiceType="mediaPlayback" />
 
-        <receiver android:name="com.minhduc202.musicapp.receiver.MyReceiver" />
-
+        <receiver android:name=".receiver.MyReceiver" />
     </application>
+
 </manifest>

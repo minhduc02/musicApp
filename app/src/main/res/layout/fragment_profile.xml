@@ -95,71 +95,11 @@
             android:textColor="@color/white"
             android:textSize="16sp"
             android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tvTitlePlaylist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvChangePass"
-            android:layout_marginStart="30sp"
-            android:layout_marginTop="30dp"
-            android:text="Playlist của tôi"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:visibility="visible" />
-
-        <RelativeLayout
-            android:id="@+id/vAddNewPlayList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvTitlePlaylist"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginBottom="30dp">
-
-            <ImageView
-                android:id="@+id/imgAddNewPlaylist"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:background="@drawable/custom_button_style1"
-                android:padding="13dp"
-                android:src="@drawable/icon_add" />
-
-            <RelativeLayout
-                android:id="@+id/vTextAddNewPlaylist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@id/imgAddNewPlaylist">
-
-                <TextView
-                    android:id="@+id/tvAddNewPlaylist1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="Thêm Playlist"
-                    android:textColor="@color/white"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/tvAddNewPlaylist2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tvAddNewPlaylist1"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="10dp"
-                    android:text="Tạo Playlist các bài hát bạn thích"
-                    android:textColor="@color/gray"
-                    android:textSize="12sp" />
-            </RelativeLayout>
-        </RelativeLayout>
-
         <Button
             android:id="@+id/btnSignOut"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:layout_below="@id/vAddNewPlayList"
+            android:layout_below="@id/tvChangePass"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="50dp"
             android:layout_marginEnd="20dp"

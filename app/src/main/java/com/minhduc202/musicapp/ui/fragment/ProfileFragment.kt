@@ -32,6 +32,7 @@ import com.minhduc202.musicapp.R
 import com.minhduc202.musicapp.databinding.DialogChangeNameBinding
 import com.minhduc202.musicapp.databinding.DialogChangePassBinding
 import com.minhduc202.musicapp.databinding.FragmentProfileBinding
+import com.minhduc202.musicapp.model.MusicItem
 import com.minhduc202.musicapp.ui.activity.LoginAndSignUpActivity
 import com.minhduc202.musicapp.ui.activity.MainActivity
 
@@ -154,6 +155,12 @@ class ProfileFragment : Fragment() {
                     Toast.makeText(requireContext(), "Thay đổi mật khẩu thành công", Toast.LENGTH_SHORT).show()
                 }
             }
+    }
+
+    // thay doi danh sách bài hát
+    private fun changeListInFirebase() {
+        val database = Firebase.database.reference
+        database.child("musics").setValue(ArrayList<MusicItem>())
     }
 
     private fun saveProfileImage(uri: Uri) {

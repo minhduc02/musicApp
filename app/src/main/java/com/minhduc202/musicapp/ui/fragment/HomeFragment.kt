@@ -26,6 +26,7 @@ import com.minhduc202.musicapp.constant.Constants
 import com.minhduc202.musicapp.epoxy.MyEpoxyController
 import com.minhduc202.musicapp.model.MusicItem
 import com.minhduc202.musicapp.databinding.FragmentHomeBinding
+import com.minhduc202.musicapp.ui.activity.HistoryActivity
 import com.minhduc202.musicapp.ui.activity.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -94,6 +95,10 @@ class HomeFragment : Fragment() {
                 initData(binding.etSearch.text.toString())
             }
         })
+
+        binding.btnHistory.setOnClickListener {
+            historyActivityLauncher.launch(Intent(requireContext(), HistoryActivity::class.java))
+        }
     }
 
     private fun initData(keyword: String) {
